@@ -14,9 +14,9 @@ var papel = area_dibujo.getContext("2d");
 var xlimite = 500;
 var ylimite = 500;
 
-// punto inicial
-var x = 250;
-var y = 250;
+// initial random coords, from min 1 and max limit - 1
+var x = aleatorio(1, (xlimite - 1) );
+var y = aleatorio(1, (ylimite - 1) );
 
 var offset = 100; // stroke speed, number of pixels that moves to draw each time the key is pressed
 var color_punto_inicial = "red";
@@ -211,3 +211,11 @@ function dibujarConTeclas(evento)
 	// also print by console the coordinate where we are
 	console.log("Coordenada - [ " + x + ", " + y + " ]");
 }
+
+function aleatorio(min, max)
+{
+	var resultado;
+	resultado = Math.floor(Math.random() * (max - min + 1)) + min;
+	return resultado;
+}
+
