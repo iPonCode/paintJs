@@ -1,3 +1,5 @@
+/* PaintJs - A simple way to paint with keyboard in Javascript */
+
 // we will load background image always the first before other items
 // we will know when background is loaded with cargaOk
 // image fondo only will show if quiere_imagen_fondo its true
