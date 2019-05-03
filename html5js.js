@@ -12,29 +12,38 @@ imagenFondo.src = fondo.url;
 imagenFondo.addEventListener("load", cargarFondo);
 
 // store the key's keyCode for check later with key was pressed
-var teclas = { UP: 38,
+var teclas = { UP: 38,	// up
 				O: 79,
-				W: 87,
+				T: 84,
+				W: 87,	// up-left
 				I: 73,
 				Q: 81,
-			 LEFT: 37,
+				R: 82,
+			 LEFT: 37,	// left
 			 	K: 75,
 			 	A: 65,
-			 COMA: 188,
+			 	F: 70,
+			 COMA: 188,	// down-left
 			 	Z: 90,
-			 DOWN: 40,
+			 	V: 86,
+			 DOWN: 40,	// down
 			PUNTO: 190,
 				X: 88,
-			GUION: 189,
+				B: 66,
+			GUION: 189,	// down-right
 				C: 67,
-			RIGHT: 39,
+				N: 78,
+			RIGHT: 39,	// right
 				Ñ: 186,
 				D: 68,
-				P: 80,
+				H: 72,
+				P: 80,	// up-right
 				E: 69,
-			SPACE: 32,
+				Y: 89,
+			SPACE: 32,	// special-key
 				L: 76,
-				S: 83
+				S: 83,
+				G: 71
 		};
 // for store the colors
 var colores = { GRIS_CLARO: "#c2c2c2",
@@ -190,6 +199,7 @@ function dibujarConTeclas(evento)
 		case teclas.UP:
 		case teclas.O:
 		case teclas.W:
+		case teclas.T:
 			if (y - offset > factor_aprox) // when the end point does not exceed canva's limits
 			{
 				if (ultima_tecla_pulsada != teclas.UP && quiere_punto_giro) dibujarPuntoGiro();
@@ -213,6 +223,7 @@ function dibujarConTeclas(evento)
 		case teclas.LEFT:
 		case teclas.K:
 		case teclas.A:
+		case teclas.F:
 			if (x - offset > factor_aprox)
 			{
 				if (ultima_tecla_pulsada != teclas.LEFT && quiere_punto_giro) dibujarPuntoGiro();
@@ -236,6 +247,7 @@ function dibujarConTeclas(evento)
 		case teclas.DOWN:
 		case teclas.PUNTO:
 		case teclas.X:
+		case teclas.B:
 			if (y + offset < ylimite - factor_aprox)
 			{
 				if (ultima_tecla_pulsada != teclas.DOWN && quiere_punto_giro) dibujarPuntoGiro();
@@ -259,6 +271,7 @@ function dibujarConTeclas(evento)
 		case teclas.RIGHT:
 		case teclas.Ñ:
 		case teclas.D:
+		case teclas.H:
 			if (x + offset < xlimite - factor_aprox)
 			{
 				if (ultima_tecla_pulsada != teclas.RIGHT && quiere_punto_giro) dibujarPuntoGiro();
@@ -282,6 +295,7 @@ function dibujarConTeclas(evento)
 		case teclas.SPACE:
 		case teclas.L:
 		case teclas.S:
+		case teclas.G:
 			dibujarPuntoGordo(); // when press spacebar we do something special
 			break;
 		default: // always print by console the keyCode pressed by user 
