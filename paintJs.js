@@ -183,13 +183,13 @@ function dibujarRejilla()
 	for (var i = 0; i < ylimite; i = i + rejilla)
 	{ // paint horizontal lines
 		dibujarLinea(color_linea_rejilla, 0, i, xlimite, i, papel, grosor_linea_rejilla);
-		console.log("linea rejilla desde [ 0, " + i +"] hasta [ " + xlimite + ", " + i + "] ");
+		// console.log("linea rejilla desde [ 0, " + i +"] hasta [ " + xlimite + ", " + i + "] ");
 	}
 
 	for (var i = 0; i < xlimite; i = i + rejilla)
 	{ // paint vertical lines
 		dibujarLinea(color_linea_rejilla, i, 0, i, ylimite, papel, grosor_linea_rejilla);
-		console.log("linea rejilla desde [ " + i +", 0 ] hasta [ " + i + ", " + ylimite + "] ");
+		// console.log("linea rejilla desde [ " + i +", 0 ] hasta [ " + i + ", " + ylimite + "] ");
 	}
 }
 
@@ -301,11 +301,11 @@ function dibujarConTeclas(evento)
 			dibujarPuntoGordo(); // when press spacebar we do something special
 			break;
 		default: // always print by console the keyCode pressed by user 
-			console.log("Tecla pulsada: " + evento.keyCode);
+			// console.log("Tecla pulsada: " + evento.keyCode);
 		break;
 	}
 	// also print by console the coordinate where we are
-	console.log("Coordenada - [ " + x + ", " + y + " ]");
+	// console.log("Coordenada - [ " + x + ", " + y + " ]");
 }
 
 function aleatorio(min, max)
