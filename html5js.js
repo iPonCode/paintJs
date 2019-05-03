@@ -1,6 +1,6 @@
 // we will load background image always the first before other items
 // we will know when background is loaded with cargaOk
-// only image will show if quiere_imagen_fondo its true
+// image fondo only will show if quiere_imagen_fondo its true
 var quiere_imagen_fondo = true;
 var fondo = {
 	url: "fondo.png",
@@ -11,13 +11,31 @@ var imagenFondo = new Image();
 imagenFondo.src = fondo.url;
 imagenFondo.addEventListener("load", cargarFondo);
 
-// for store the key pressed
+// store the key's keyCode for check later with key was pressed
 var teclas = { UP: 38,
+				O: 79,
+				W: 87,
+				I: 73,
+				Q: 81,
 			 LEFT: 37,
+			 	K: 75,
+			 	A: 65,
+			 COMA: 188,
+			 	Z: 90,
 			 DOWN: 40,
+			PUNTO: 190,
+				X: 88,
+			GUION: 189,
+				C: 67,
 			RIGHT: 39,
-			SPACE: 32
-		   };
+				Ñ: 186,
+				D: 68,
+				P: 80,
+				E: 69,
+			SPACE: 32,
+				L: 76,
+				S: 83
+		};
 // for store the colors
 var colores = { GRIS_CLARO: "#c2c2c2",
 			   GRIS_OSCURO: "#969696",
@@ -168,7 +186,10 @@ function dibujarConTeclas(evento)
 {
 	switch (evento.keyCode)
 	{
+		// go UP
 		case teclas.UP:
+		case teclas.O:
+		case teclas.W:
 			if (y - offset > factor_aprox) // when the end point does not exceed canva's limits
 			{
 				if (ultima_tecla_pulsada != teclas.UP && quiere_punto_giro) dibujarPuntoGiro();
@@ -188,7 +209,10 @@ function dibujarConTeclas(evento)
 				console.log("	* - Límite SUPERIOR superado");
 			}		
 		break;
+		// go left
 		case teclas.LEFT:
+		case teclas.K:
+		case teclas.A:
 			if (x - offset > factor_aprox)
 			{
 				if (ultima_tecla_pulsada != teclas.LEFT && quiere_punto_giro) dibujarPuntoGiro();
@@ -208,7 +232,10 @@ function dibujarConTeclas(evento)
 				console.log("	* - Límite IZQUIERDO superado");
 			}
 		break;
+		// go down
 		case teclas.DOWN:
+		case teclas.PUNTO:
+		case teclas.X:
 			if (y + offset < ylimite - factor_aprox)
 			{
 				if (ultima_tecla_pulsada != teclas.DOWN && quiere_punto_giro) dibujarPuntoGiro();
@@ -228,7 +255,10 @@ function dibujarConTeclas(evento)
 				console.log("	* - Límite INFERIOR superado");
 			}		
 		break;
+		// go right
 		case teclas.RIGHT:
+		case teclas.Ñ:
+		case teclas.D:
 			if (x + offset < xlimite - factor_aprox)
 			{
 				if (ultima_tecla_pulsada != teclas.RIGHT && quiere_punto_giro) dibujarPuntoGiro();
@@ -248,7 +278,10 @@ function dibujarConTeclas(evento)
 				console.log("	* - Límite DERECHO superado");
 			}
 		break;
+		// do something special 
 		case teclas.SPACE:
+		case teclas.L:
+		case teclas.S:
 			dibujarPuntoGordo(); // when press spacebar we do something special
 			break;
 		default: // always print by console the keyCode pressed by user 
