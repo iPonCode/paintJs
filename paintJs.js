@@ -8,12 +8,11 @@ var fondo = {
 	url: "fondo.png",
 	cargaOk: false
 };
-
 var imagenFondo = new Image();
 imagenFondo.src = fondo.url;
 imagenFondo.addEventListener("load", cargarFondo);
 
-// store the key's keyCode for check later with key was pressed
+// we store the key's keyCodes for check later which key was pressed
 var teclas = { UP: 38,	// up
 				O: 79,
 				T: 84,
@@ -67,8 +66,8 @@ var area_dibujo = document.getElementById("area_de_dibujo");
 var papel = area_dibujo.getContext("2d");
 
 // canvas limits (its recommended that it be the same size as in the html)
-var xlimite = 500;
-var ylimite = 500;
+var xlimite = 700;
+var ylimite = 250;
 
 // line for canvas limits
 var color_linea_borde = colores.GRIS_OSCURO; // this is the perimeter line
@@ -76,7 +75,7 @@ var grosor_linea_borde = 5;
 var quiere_dibujar_bordes = true;
 
 // configure grid
-var rejilla = 25; // the number of pixel for grid space
+var rejilla = 10; // the number of pixel for grid space
 var color_linea_rejilla = colores.GRIS_CLARO; // grid's line color
 var grosor_linea_rejilla = 1; // 1 for better results (many lines in grid)
 var quiere_dibujar_rejilla = true; // if wants show the grid
@@ -86,7 +85,7 @@ var grosor_linea_aspa = grosor_linea_rejilla;
 var quiere_dibujar_aspa = true;
 
 // stroke speed, number of pixels that moves to draw each time the key is pressed
-var offset = 25; 
+var offset = rejilla; 
 
 // initial point
 var color_punto_inicial = colores.ROJO;
@@ -104,15 +103,15 @@ var grosor_punto_giro = grosor_linea_dibujo; // simmilar to grosor_linea_dibujo 
 var color_punto_gordo = color_punto_inicial; // when user tap spacebar draw a "punto_gordo" X
 var grosor_punto_gordo = 10; // more than 5 it starts to look like a cross X, less like a a point
 
-var factor_aprox = 65; // experimental, set to 0 for a normal behaviour
+var factor_aprox = 10; // experimental, set to 0 for a normal behaviour
 var xtopemax = xlimite - factor_aprox; // es el límite máximo (por la derecha y abajo) de coordenadas
 var ytopemax = ylimite - factor_aprox; // x e y teniendo en cuenta el factor de aproximación experimental
 var xtopemin = 0 + factor_aprox; // es el límite mínimo (por la izquierda y arriba) de coordenadas
 var ytopemin = 0 + factor_aprox; // x e y teniendo en cuenta el factor de aproximación experimental
 
-// initial random coords, from min 1 and max limit - 1 and fitted to the grid
-x = ajustarARejilla(aleatorio(1, (xlimite - 1)), rejilla, xlimite);
-y = ajustarARejilla(aleatorio(1, (ylimite - 1)), rejilla, ylimite);
+// initial random coords, from min topemin, max topemax and fitted to the grid
+x = ajustarARejilla(aleatorio(xtopemin, xtopemax), rejilla, xtopemax);
+y = ajustarARejilla(aleatorio(ytopemin, ytopemax), rejilla, ytopemax);
 
 // each time user do evento_tecla we call dibujarConTeclas function
 document.addEventListener(evento_tecla, dibujarConTeclas);
@@ -207,24 +206,30 @@ function dibujarConTeclas(evento)
 		case teclas.O:
 		case teclas.W:
 		case teclas.T:
-			if (y - offset > factor_aprox) // when the end point does not exceed canva's limits
-			{
+			yobjetivo = y - offset; 	// this whould be the y end point coord before apply move
+			if (yobjetivo >= ytopemin)
+			{ // when the end point does not exceed or is iqual to the min ytopemin, we draw to the end point
 				if (ultima_tecla_pulsada != teclas.UP && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, x, y - offset, papel, grosor_linea_dibujo);
-				y = y - offset;
+				dibujarLinea(color_linea_dibujo, x, y, x, yobjetivo, papel, grosor_linea_dibujo);
+				y = yobjetivo;
 				ultima_tecla_pulsada = teclas.UP;
+				console.log("Avance NORMAL");
 			}
-			else if (y > 0) // when the end point exceed canva's limits we draw up to the limits
-			{
-				if (ultima_tecla_pulsada != teclas.UP && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, x, 0, papel, grosor_linea_dibujo);
-				y = 0;
-				ultima_tecla_pulsada = teclas.UP;
+			else
+			{ // when the end point exceed the min ytopemin limit, we draw up to the limit
+				if (y != ytopemin)
+				{
+					if (ultima_tecla_pulsada != teclas.UP && quiere_punto_giro) dibujarPuntoGiro();
+					dibujarLinea(color_linea_dibujo, x, y, x, ytopemin, papel, grosor_linea_dibujo);
+					y = ytopemin;
+					ultima_tecla_pulsada = teclas.UP;
+					console.log("Avance RECORTANDO EN Y");
+				}
+				else
+				{ // finally, if we are already in the limit, nothing to do, don't move
+					console.log("Se ha ALCANZADO LIMITE SUPERIOR");
+				}
 			}
-			else // when user allready are on the limit and tap again the key 
-			{
-				console.log("	* - Límite SUPERIOR superado");
-			}		
 		break;
 
 		// go up-left
@@ -275,25 +280,31 @@ function dibujarConTeclas(evento)
 		case teclas.K:
 		case teclas.A:
 		case teclas.F:
-			if (x - offset > factor_aprox)
-			{
+			xobjetivo = x - offset; 	// this whould be the x end point coord before apply move
+			if (xobjetivo >= xtopemin)
+			{ // when the end point does not exceed or is iqual to the min xtopemin, we draw to the end point
 				if (ultima_tecla_pulsada != teclas.LEFT && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, x - offset, y, papel, grosor_linea_dibujo);
-				x = x - offset;
+				dibujarLinea(color_linea_dibujo, x, y, xobjetivo, y, papel, grosor_linea_dibujo);
+				x = xobjetivo;
 				ultima_tecla_pulsada = teclas.LEFT;
-			}
-			else if (x > 0)
-			{
-				if (ultima_tecla_pulsada != teclas.LEFT && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, 0, y, papel, grosor_linea_dibujo);
-				x = 0;
-				ultima_tecla_pulsada = teclas.LEFT;
+				console.log("Avance NORMAL");
 			}
 			else
-			{
-				console.log("	* - Límite IZQUIERDO superado");
+			{ // when the end point exceed the min xtopemin limit, we draw up to the limit
+				if (x != xtopemin)
+				{
+					if (ultima_tecla_pulsada != teclas.LEFT && quiere_punto_giro) dibujarPuntoGiro();
+					dibujarLinea(color_linea_dibujo, x, y, xtopemin, y, papel, grosor_linea_dibujo);
+					x = xtopemin;
+					ultima_tecla_pulsada = teclas.LEFT;
+					console.log("Avance RECORTANDO EN X");
+				}
+				else
+				{ // finally, if we are already in the limit, nothing to do, don't move
+					console.log("Se ha ALCANZADO LIMITE IZQUIERDO");
+				}
 			}
-		break;
+		break
 
 		// go down-left
 		case teclas.COMA:
@@ -306,29 +317,29 @@ function dibujarConTeclas(evento)
 
 			if ((xobjetivo >= xtopemin) && (yobjetivo <= ytopemax)) 
 			{ // ojetivo dentro de limites o justo en el limite entonces avance normal
-				if (ultima_tecla_pulsada != teclas.GUION && quiere_punto_giro) dibujarPuntoGiro();
+				if (ultima_tecla_pulsada != teclas.COMA && quiere_punto_giro) dibujarPuntoGiro();
 				dibujarLinea(color_linea_dibujo, x, y, xobjetivo, yobjetivo, papel, grosor_linea_dibujo);
 				x = xobjetivo;
 				y = yobjetivo;
-				ultima_tecla_pulsada = teclas.GUION;
+				ultima_tecla_pulsada = teclas.COMA;
 				console.log("Avance NORMAL");
 			}
 			else if ((xobjetivo >= xtopemin) && (yobjetivo > ytopemax))
 			{ // ojetivo x dentro de limites y objetivo y fuera de limites entonces avance recortando y
-				if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
+				if (ultima_tecla_pulsada != teclas.COMA && quiere_punto_giro) dibujarPuntoGiro();
 				dibujarLinea(color_linea_dibujo, x, y, x - x_avanza_recortando_y, ytopemax, papel, grosor_linea_dibujo);
 				x = x - x_avanza_recortando_y;
 				y =  ytopemax;
-				ultima_tecla_pulsada = teclas.GUION;
+				ultima_tecla_pulsada = teclas.COMA;
 				console.log("X Avanza RECORTANDO Y");
 			}
 			else if ((xobjetivo < xtopemin) && (yobjetivo <= ytopemax))
 			{ // ojetivo x fuera de limites y objetivo y dentro de limites entonces avance recortando x
-				if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
+				if (ultima_tecla_pulsada != teclas.COMA && quiere_punto_giro) dibujarPuntoGiro();
 				dibujarLinea(color_linea_dibujo, x, y, xtopemin, y + y_avanza_recortando_x, papel, grosor_linea_dibujo);
 				y = y + y_avanza_recortando_x;
 				x = xtopemin;
-				ultima_tecla_pulsada = teclas.GUION;
+				ultima_tecla_pulsada = teclas.COMA;
 				console.log("Y Avanza RECORTANDO X");
 			}
 			else
@@ -343,25 +354,31 @@ function dibujarConTeclas(evento)
 		case teclas.PUNTO:
 		case teclas.X:
 		case teclas.B:
-			if (y + offset < ylimite - factor_aprox)
-			{
+			yobjetivo = y + offset; 	// this whould be the y end point coord before apply move
+			if (yobjetivo <= ytopemax)
+			{ // when the end point does not exceed or is iqual to the max ytopemax, we draw to the end point
 				if (ultima_tecla_pulsada != teclas.DOWN && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, x, y + offset, papel, grosor_linea_dibujo);
-				y = y + offset;
+				dibujarLinea(color_linea_dibujo, x, y, x, yobjetivo, papel, grosor_linea_dibujo);
+				y = yobjetivo;
 				ultima_tecla_pulsada = teclas.DOWN;
-			}
-			else if (y < ylimite)
-			{
-				if (ultima_tecla_pulsada != teclas.DOWN && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, x, ylimite, papel, grosor_linea_dibujo);
-				y = ylimite;
-				ultima_tecla_pulsada = teclas.DOWN;
+				console.log("Avance NORMAL");
 			}
 			else
-			{
-				console.log("	* - Límite INFERIOR superado");
-			}		
-		break;
+			{ // when the end point exceed the max ytopemax limit, we draw up to the limit
+				if (y != ytopemax)
+				{
+					if (ultima_tecla_pulsada != teclas.DOWN && quiere_punto_giro) dibujarPuntoGiro();
+					dibujarLinea(color_linea_dibujo, x, y, x, ytopemax, papel, grosor_linea_dibujo);
+					y = ytopemax;
+					ultima_tecla_pulsada = teclas.DOWN;
+					console.log("Avance RECORTANDO EN Y");
+				}
+				else
+				{ // finally, if we are already in the limit, nothing to do, don't move
+					console.log("Se ha ALCANZADO LIMITE INFERIOR");
+				}
+			}
+		break
 
 		// go down-right
 		case teclas.GUION:
@@ -411,25 +428,31 @@ function dibujarConTeclas(evento)
 		case teclas.Ñ:
 		case teclas.D:
 		case teclas.H:
-			if (x + offset < xlimite - factor_aprox)
-			{
+			xobjetivo = x + offset; 	// this whould be the x end point coord before apply move
+			if (xobjetivo <= xtopemax)
+			{ // when the end point does not exceed or is iqual to the max xtopemax, we draw to the end point
 				if (ultima_tecla_pulsada != teclas.RIGHT && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, x + offset, y, papel, grosor_linea_dibujo);
-				x = x + offset;
+				dibujarLinea(color_linea_dibujo, x, y, xobjetivo, y, papel, grosor_linea_dibujo);
+				x = xobjetivo;
 				ultima_tecla_pulsada = teclas.RIGHT;
-			}
-			else if (x < xlimite)
-			{
-				if (ultima_tecla_pulsada != teclas.RIGHT && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, xlimite, y, papel, grosor_linea_dibujo);
-				x = xlimite;
-				ultima_tecla_pulsada = teclas.RIGHT;
+				console.log("Avance NORMAL");
 			}
 			else
-			{
-				console.log("	* - Límite DERECHO superado");
+			{ // when the end point exceed the max xtopemax limit, we draw up to the limit
+				if (x != xtopemax)
+				{
+					if (ultima_tecla_pulsada != teclas.RIGHT && quiere_punto_giro) dibujarPuntoGiro();
+					dibujarLinea(color_linea_dibujo, x, y, xtopemax, y, papel, grosor_linea_dibujo);
+					x = xtopemax;
+					ultima_tecla_pulsada = teclas.RIGHT;
+					console.log("Avance RECORTANDO EN X");
+				}
+				else
+				{ // finally, if we are already in the limit, nothing to do, don't move
+					console.log("Se ha ALCANZADO LIMITE DERECHO");
+				}
 			}
-		break;
+		break
 
 		// go up-right
 		case teclas.P:
@@ -442,29 +465,29 @@ function dibujarConTeclas(evento)
 
 			if ((xobjetivo <= xtopemax) && (yobjetivo >= ytopemin)) 
 			{ // ojetivo dentro de limites o justo en el limite entonces avance normal
-				if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
+				if (ultima_tecla_pulsada != teclas.P && quiere_punto_giro) dibujarPuntoGiro();
 				dibujarLinea(color_linea_dibujo, x, y, xobjetivo, yobjetivo, papel, grosor_linea_dibujo);
 				x = xobjetivo;
 				y = yobjetivo;
-				ultima_tecla_pulsada = teclas.I;
+				ultima_tecla_pulsada = teclas.P;
 				console.log("Avance NORMAL");
 			}
 			else if ((xobjetivo <= xtopemax) && (yobjetivo < ytopemin))
 			{ // ojetivo x dentro de limites y objetivo y fuera de limites entonces avance recortando y
-				if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
+				if (ultima_tecla_pulsada != teclas.P && quiere_punto_giro) dibujarPuntoGiro();
 				dibujarLinea(color_linea_dibujo, x, y, x + x_avanza_recortando_y, ytopemin, papel, grosor_linea_dibujo);
 				x = x + x_avanza_recortando_y;
 				y =  ytopemin;
-				ultima_tecla_pulsada = teclas.I;
+				ultima_tecla_pulsada = teclas.P;
 				console.log("X Avanza RECORTANDO Y");
 			}
 			else if ((xobjetivo > xtopemax) && (yobjetivo >= ytopemin))
 			{ // ojetivo x fuera de limites y objetivo y dentro de limites entonces avance recortando x
-				if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
+				if (ultima_tecla_pulsada != teclas.P && quiere_punto_giro) dibujarPuntoGiro();
 				dibujarLinea(color_linea_dibujo, x, y, xtopemax, y - y_avanza_recortando_x, papel, grosor_linea_dibujo);
 				y = y - y_avanza_recortando_x;
 				x = xtopemax;
-				ultima_tecla_pulsada = teclas.I;
+				ultima_tecla_pulsada = teclas.P;
 				console.log("Y Avanza RECORTANDO X");
 			}
 			else
@@ -500,10 +523,10 @@ function ajustarARejilla(numero, rejilla, limite)
 {
 	// returns the number closest to the grid size
 	// numero must be between 0 and limite
-	// rejilla must be maximun half of limite
+	// the grid should be as high as half the limit
 
 	if (numero % rejilla == 0)
-	{ // if numero already is multiple of rejilla its ok
+	{ // if numero already is multiple of rejilla it's ok
 		return numero;
 	}
 	else
@@ -514,12 +537,12 @@ function ajustarARejilla(numero, rejilla, limite)
 		} while (multiplo_siguiente % rejilla != 0);
 
 		var multiplo_anterior = numero;
-		do { // find de previous rejilla's multiple
+		do { // find the previous rejilla's multiple
 			multiplo_anterior -= 1;
 		} while (multiplo_anterior % rejilla != 0);
 
 		if ( (multiplo_siguiente - numero) <= (numero - multiplo_anterior) )
-		{ // numero is closet than multiplo_siguiente (or same distance)
+		{ // numero is closest than multiplo_siguiente (or same distance)
 			if (multiplo_siguiente > limite)
 			{ // but exceed limit
 				return multiplo_anterior;
@@ -530,7 +553,7 @@ function ajustarARejilla(numero, rejilla, limite)
 			}
 		}
 		else
-		{ // numero is closet than multiplo_anterior
+		{ // numero is closest than multiplo_anterior
 			if (multiplo_anterior < 0)
 			{ // but exeed limit 0
 				return multiplo_siguiente;
