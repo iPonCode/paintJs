@@ -116,8 +116,8 @@ y = ajustarARejilla(aleatorio(ytopemin, ytopemax), rejilla, ytopemax);
 // each time user do evento_tecla we call dibujarConTeclas function
 document.addEventListener(evento_tecla, dibujarConTeclas);
 
-// we show in html body the initial coordinate
-document.write("Coordenada inicial - [ X: " + x + ", Y: " + y + " ]");
+// we show in html body the initial coordinate using innerHTML property
+document.getElementById("soy_un_parrafo").innerHTML = "COORD INICIAL => [ X: " + x + ", Y: " + y + " ]";
 
 function cargarFondo()
 {
