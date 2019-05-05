@@ -55,7 +55,11 @@ var colores = { GRIS_CLARO: "#c2c2c2",
 			   		  ROSA: "pink",
 			   		 NEGRO: "black"
 			};
-
+// for store some texts for the user interface
+var textos = { COORDENADAS: "Coordenadas ",
+				COORDS_INI: "iniciales: ",
+				COORDS_ACT: "actuales: ",
+			};
 // configure the key pressed behavior to catch
 // try keyup for draw carefuly, try keydown to quickly
 var evento_tecla = "keydown";
@@ -117,7 +121,7 @@ y = ajustarARejilla(aleatorio(ytopemin, ytopemax), rejilla, ytopemax);
 document.addEventListener(evento_tecla, dibujarConTeclas);
 
 // we show in html body the initial coordinate using innerHTML property
-document.getElementById("soy_un_parrafo").innerHTML = "COORD INICIAL => [ X: " + x + ", Y: " + y + " ]";
+document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_INI + "[ x: " + x + ", y: " + y + " ]";
 
 function cargarFondo()
 {
@@ -230,6 +234,7 @@ function dibujarConTeclas(evento)
 					console.log("Se ha ALCANZADO LIMITE SUPERIOR");
 				}
 			}
+			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 		break;
 
 		// go up-left
@@ -287,6 +292,7 @@ function dibujarConTeclas(evento)
 				console.log("	* - Caso SUPERIOR-IZQUIERDO no controlado");
 			}
 			console.log("xobjetivo: " + xobjetivo + " * yobjetivo: " + yobjetivo);
+			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 		break;
 
 		// go left
@@ -318,7 +324,8 @@ function dibujarConTeclas(evento)
 					console.log("Se ha ALCANZADO LIMITE IZQUIERDO");
 				}
 			}
-		break
+			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
+		break;
 
 		// go down-left
 		case teclas.COMA:
@@ -375,6 +382,7 @@ function dibujarConTeclas(evento)
 				console.log("	* - Caso INFERIOR-IZQUIERDO no controlado");
 			}
 			console.log("xobjetivo: " + xobjetivo + " * yobjetivo: " + yobjetivo);
+			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 		break;
 
 		// go down
@@ -406,7 +414,8 @@ function dibujarConTeclas(evento)
 					console.log("Se ha ALCANZADO LIMITE INFERIOR");
 				}
 			}
-		break
+			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
+		break;
 
 		// go down-right
 		case teclas.GUION:
@@ -463,6 +472,7 @@ function dibujarConTeclas(evento)
 				console.log("	* - Caso INFERIOR-DERECHO no controlado");
 			}
 			console.log("xobjetivo: " + xobjetivo + " * yobjetivo: " + yobjetivo);
+			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 		break;
 
 		// go right
@@ -494,7 +504,8 @@ function dibujarConTeclas(evento)
 					console.log("Se ha ALCANZADO LIMITE DERECHO");
 				}
 			}
-		break
+			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
+		break;
 
 		// go up-right
 		case teclas.P:
@@ -551,6 +562,7 @@ function dibujarConTeclas(evento)
 				console.log("	* - Límite SUPERIOR-DERECHO superado");
 			}
 			console.log("xobjetivo: " + xobjetivo + " * yobjetivo: " + yobjetivo);
+			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 		break;
 
 		// do something special 
@@ -559,10 +571,12 @@ function dibujarConTeclas(evento)
 		case teclas.S:
 		case teclas.G:
 			dibujarPuntoGordo(); // when press spacebar we do something special
+			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 			break;
 		default: // always print by console the keyCode pressed by user 
 			// console.log("Tecla pulsada: " + evento.keyCode);
-		break;
+			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
+			break;
 	}
 	// also print by console the coordinate where we are
 	console.log("Coordenada - [ " + x + ", " + y + " ]");
