@@ -60,13 +60,18 @@ var textos = { COORDENADAS: "Coordenadas ",
 				COORDS_INI: "iniciales: ",
 				COORDS_ACT: "actuales: ",
 			};
+// for getElementById, this store all html id's items
+var elements_by_id = { COORDS: "soy_un_parrafo",
+				        OTROS: "otro_id_de_elemento",
+				  AREA_DIBUJO: "area_de_dibujo"
+					 };
 // configure the key pressed behavior to catch
 // try keyup for draw carefuly, try keydown to quickly
 var evento_tecla = "keydown";
 var ultima_tecla_pulsada = teclas.SPACE; // inizilice with some key, like spacebar
 
 // get canvas from html
-var area_dibujo = document.getElementById("area_de_dibujo");
+var area_dibujo = document.getElementById(elements_by_id.AREA_DIBUJO);
 var papel = area_dibujo.getContext("2d");
 
 // canvas limits (its recommended that it be the same size as in the html)
@@ -120,8 +125,9 @@ y = ajustarARejilla(aleatorio(ytopemin, ytopemax), rejilla, ytopemax);
 // each time user do evento_tecla we call dibujarConTeclas function
 document.addEventListener(evento_tecla, dibujarConTeclas);
 
-// we show in html body the initial coordinate using innerHTML property
-document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_INI + "[ x: " + x + ", y: " + y + " ]";
+// we show in html body the initial coordinate using innerHTML elemnt property
+var mensaje_coordenadas = document.getElementById(elements_by_id.COORDS);
+mensaje_coordenadas.innerHTML = textos.COORDENADAS + textos.COORDS_INI + "[ x: " + x + ", y: " + y + " ]";
 
 function cargarFondo()
 {
@@ -234,7 +240,7 @@ function dibujarConTeclas(evento)
 					console.log("Se ha ALCANZADO LIMITE SUPERIOR");
 				}
 			}
-			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
+			mensaje_coordenadas.innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 		break;
 
 		// go up-left
@@ -292,7 +298,7 @@ function dibujarConTeclas(evento)
 				console.log("	* - Caso SUPERIOR-IZQUIERDO no controlado");
 			}
 			console.log("xobjetivo: " + xobjetivo + " * yobjetivo: " + yobjetivo);
-			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
+			mensaje_coordenadas.innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 		break;
 
 		// go left
@@ -324,7 +330,7 @@ function dibujarConTeclas(evento)
 					console.log("Se ha ALCANZADO LIMITE IZQUIERDO");
 				}
 			}
-			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
+			mensaje_coordenadas.innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 		break;
 
 		// go down-left
@@ -382,7 +388,7 @@ function dibujarConTeclas(evento)
 				console.log("	* - Caso INFERIOR-IZQUIERDO no controlado");
 			}
 			console.log("xobjetivo: " + xobjetivo + " * yobjetivo: " + yobjetivo);
-			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
+			mensaje_coordenadas.innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 		break;
 
 		// go down
@@ -414,7 +420,7 @@ function dibujarConTeclas(evento)
 					console.log("Se ha ALCANZADO LIMITE INFERIOR");
 				}
 			}
-			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
+			mensaje_coordenadas.innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 		break;
 
 		// go down-right
@@ -472,7 +478,7 @@ function dibujarConTeclas(evento)
 				console.log("	* - Caso INFERIOR-DERECHO no controlado");
 			}
 			console.log("xobjetivo: " + xobjetivo + " * yobjetivo: " + yobjetivo);
-			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
+			mensaje_coordenadas.innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 		break;
 
 		// go right
@@ -504,7 +510,7 @@ function dibujarConTeclas(evento)
 					console.log("Se ha ALCANZADO LIMITE DERECHO");
 				}
 			}
-			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
+			mensaje_coordenadas.innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 		break;
 
 		// go up-right
@@ -562,7 +568,7 @@ function dibujarConTeclas(evento)
 				console.log("	* - Límite SUPERIOR-DERECHO superado");
 			}
 			console.log("xobjetivo: " + xobjetivo + " * yobjetivo: " + yobjetivo);
-			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
+			mensaje_coordenadas.innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 		break;
 
 		// do something special 
@@ -571,11 +577,11 @@ function dibujarConTeclas(evento)
 		case teclas.S:
 		case teclas.G:
 			dibujarPuntoGordo(); // when press spacebar we do something special
-			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
+			mensaje_coordenadas.innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 			break;
 		default: // always print by console the keyCode pressed by user 
 			// console.log("Tecla pulsada: " + evento.keyCode);
-			document.getElementById("soy_un_parrafo").innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
+			mensaje_coordenadas.innerHTML = textos.COORDENADAS + textos.COORDS_ACT + "[ x: " + x + ", y: " + y + " ]";
 			break;
 	}
 	// also print by console the coordinate where we are
