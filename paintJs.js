@@ -66,8 +66,8 @@ var area_dibujo = document.getElementById("area_de_dibujo");
 var papel = area_dibujo.getContext("2d");
 
 // canvas limits (its recommended that it be the same size as in the html)
-var xlimite = 700;
-var ylimite = 250;
+var xlimite = 500;
+var ylimite = 500;
 
 // line for canvas limits
 var color_linea_borde = colores.GRIS_OSCURO; // this is the perimeter line
@@ -85,7 +85,7 @@ var grosor_linea_aspa = grosor_linea_rejilla;
 var quiere_dibujar_aspa = true;
 
 // stroke speed, number of pixels that moves to draw each time the key is pressed
-var offset = rejilla; 
+var offset = 15; 
 
 // initial point
 var color_punto_inicial = colores.ROJO;
@@ -100,14 +100,14 @@ var color_punto_giro = color_linea_dibujo; // play with this color for cool resu
 var grosor_punto_giro = grosor_linea_dibujo; // simmilar to grosor_linea_dibujo to best results
 
 // configure point to mark the actual coordenate, when spacebar key pressed
-var color_punto_gordo = color_punto_inicial; // when user tap spacebar draw a "punto_gordo" X
+var color_punto_gordo = color_punto_inicial; // when user tap spacebar draw a punto_gordo X
 var grosor_punto_gordo = 10; // more than 5 it starts to look like a cross X, less like a a point
 
-var factor_aprox = 10; // experimental, set to 0 for a normal behaviour
-var xtopemax = xlimite - factor_aprox; // es el límite máximo (por la derecha y abajo) de coordenadas
-var ytopemax = ylimite - factor_aprox; // x e y teniendo en cuenta el factor de aproximación experimental
-var xtopemin = 0 + factor_aprox; // es el límite mínimo (por la izquierda y arriba) de coordenadas
-var ytopemin = 0 + factor_aprox; // x e y teniendo en cuenta el factor de aproximación experimental
+var factor_aprox = 0; // experimental, set to 0 for a normal behaviour
+var xtopemax = xlimite - factor_aprox; // is the high limit (by the right and down) of the x and y coordinates
+var ytopemax = ylimite - factor_aprox; // taking into account the experimental factor_aprox
+var xtopemin = 0 + factor_aprox; // is the low limit (by the left and up) of the x and y coordinates
+var ytopemin = 0 + factor_aprox; // aking into account the experimental factor_aprox
 
 // initial random coords, from min topemin, max topemax and fitted to the grid
 x = ajustarARejilla(aleatorio(xtopemin, xtopemax), rejilla, xtopemax);
@@ -248,29 +248,43 @@ function dibujarConTeclas(evento)
 				x = xobjetivo;
 				y = yobjetivo;
 				ultima_tecla_pulsada = teclas.I;
-				console.log("Avance NORMAL");
+				console.log("Avance DIAGONAL NORMAL");
 			}
 			else if ((xobjetivo >= xtopemin) && (yobjetivo < ytopemin))
 			{ // ojetivo x dentro de limites y objetivo y fuera de limites entonces avance recortando y
-				if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, x - x_avanza_recortando_y, ytopemin, papel, grosor_linea_dibujo);
-				x = x - x_avanza_recortando_y;
-				y =  ytopemin;
-				ultima_tecla_pulsada = teclas.I;
-				console.log("X Avanza RECORTANDO Y");
+				if (y != ytopemin)
+				{
+					if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
+					dibujarLinea(color_linea_dibujo, x, y, x - x_avanza_recortando_y, ytopemin, papel, grosor_linea_dibujo);
+					x = x - x_avanza_recortando_y;
+					y =  ytopemin;
+					ultima_tecla_pulsada = teclas.I;
+					console.log("Anvance DIAGONAL hasta el LÍMITE en Y");
+				}
+				else
+				{ // if we are already in the limit, nothing to do, don't move
+					console.log("Se ha ALCANZADO LIMITE SUPERIOR en Y (DIAGONAL)");
+				}
 			}
-			else if ((xobjetivo < xtopemax) && (yobjetivo >= ytopemax))
+			else if ((xobjetivo < xtopemin) && (yobjetivo >= ytopemin))
 			{ // ojetivo x fuera de limites y objetivo y dentro de limites entonces avance recortando x
-				if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, xtopemin, y - y_avanza_recortando_x, papel, grosor_linea_dibujo);
-				y = y - y_avanza_recortando_x;
-				x = xtopemin;
-				ultima_tecla_pulsada = teclas.I;
-				console.log("Y Avanza RECORTANDO X");
+				if (x != xtopemin)
+				{
+					if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
+					dibujarLinea(color_linea_dibujo, x, y, xtopemin, y - y_avanza_recortando_x, papel, grosor_linea_dibujo);
+					y = y - y_avanza_recortando_x;
+					x = xtopemin;
+					ultima_tecla_pulsada = teclas.I;
+					console.log("Anvance DIAGONAL hasta EL LÍMITE en X");
+				}
+				else
+				{ // if we are already in the limit, nothing to do, don't move
+					console.log("Se ha ALCANZADO LIMITE IZQUIERDO en X (DIAGONAL)");
+				}
 			}
 			else
 			{
-				console.log("	* - Límite SUPERIOR-IZQUIERDO superado");
+				console.log("	* - Caso SUPERIOR-IZQUIERDO no controlado");
 			}
 			console.log("xobjetivo: " + xobjetivo + " * yobjetivo: " + yobjetivo);
 		break;
@@ -322,29 +336,43 @@ function dibujarConTeclas(evento)
 				x = xobjetivo;
 				y = yobjetivo;
 				ultima_tecla_pulsada = teclas.COMA;
-				console.log("Avance NORMAL");
+				console.log("Avance DIAGONAL NORMAL");
 			}
 			else if ((xobjetivo >= xtopemin) && (yobjetivo > ytopemax))
 			{ // ojetivo x dentro de limites y objetivo y fuera de limites entonces avance recortando y
-				if (ultima_tecla_pulsada != teclas.COMA && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, x - x_avanza_recortando_y, ytopemax, papel, grosor_linea_dibujo);
-				x = x - x_avanza_recortando_y;
-				y =  ytopemax;
-				ultima_tecla_pulsada = teclas.COMA;
-				console.log("X Avanza RECORTANDO Y");
+				if (y != ytopemax)
+				{
+					if (ultima_tecla_pulsada != teclas.COMA && quiere_punto_giro) dibujarPuntoGiro();
+					dibujarLinea(color_linea_dibujo, x, y, x - x_avanza_recortando_y, ytopemax, papel, grosor_linea_dibujo);
+					x = x - x_avanza_recortando_y;
+					y =  ytopemax;
+					ultima_tecla_pulsada = teclas.COMA;
+					console.log("Anvance DIAGONAL hasta el LÍMITE en Y");
+				}
+				else
+				{ // if we are already in the limit, nothing to do, don't move
+					console.log("Se ha ALCANZADO LIMITE INFERIOR en Y (DIAGONAL)");
+				}
 			}
 			else if ((xobjetivo < xtopemin) && (yobjetivo <= ytopemax))
 			{ // ojetivo x fuera de limites y objetivo y dentro de limites entonces avance recortando x
-				if (ultima_tecla_pulsada != teclas.COMA && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, xtopemin, y + y_avanza_recortando_x, papel, grosor_linea_dibujo);
-				y = y + y_avanza_recortando_x;
-				x = xtopemin;
-				ultima_tecla_pulsada = teclas.COMA;
-				console.log("Y Avanza RECORTANDO X");
+				if (x != xtopemin)
+				{
+					if (ultima_tecla_pulsada != teclas.COMA && quiere_punto_giro) dibujarPuntoGiro();
+					dibujarLinea(color_linea_dibujo, x, y, xtopemin, y + y_avanza_recortando_x, papel, grosor_linea_dibujo);
+					y = y + y_avanza_recortando_x;
+					x = xtopemin;
+					ultima_tecla_pulsada = teclas.COMA;
+					console.log("Anvance DIAGONAL hasta el LÍMITE en X");
+				}
+				else
+				{ // if we are already in the limit, nothing to do, don't move
+					console.log("Se ha ALCANZADO LIMITE INFERIOR en X (DIAGONAL)");
+				}
 			}
 			else
 			{
-				console.log("	* - Límite INFERIOR-DERECHO superado");
+				console.log("	* - Caso INFERIOR-IZQUIERDO no controlado");
 			}
 			console.log("xobjetivo: " + xobjetivo + " * yobjetivo: " + yobjetivo);
 		break;
@@ -396,29 +424,43 @@ function dibujarConTeclas(evento)
 				x = xobjetivo;
 				y = yobjetivo;
 				ultima_tecla_pulsada = teclas.GUION;
-				console.log("Avance NORMAL");
+				console.log("Avance DIAGONAL NORMAL");
 			}
 			else if ((xobjetivo <= xtopemax) && (yobjetivo > ytopemax))
 			{ // ojetivo x dentro de limites y objetivo y fuera de limites entonces avance recortando y
-				if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, x + x_avanza_recortando_y, ytopemax, papel, grosor_linea_dibujo);
-				x = x + x_avanza_recortando_y;
-				y =  ytopemax;
-				ultima_tecla_pulsada = teclas.GUION;
-				console.log("X Avanza RECORTANDO Y");
+				if (y != ytopemax)
+				{
+					if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
+					dibujarLinea(color_linea_dibujo, x, y, x + x_avanza_recortando_y, ytopemax, papel, grosor_linea_dibujo);
+					x = x + x_avanza_recortando_y;
+					y =  ytopemax;
+					ultima_tecla_pulsada = teclas.GUION;
+					console.log("Anvance DIAGONAL hasta el LÍMITE en Y");
+				}
+				else
+				{ // if we are already in the limit, nothing to do, don't move
+					console.log("Se ha ALCANZADO LIMITE INFERIOR en Y (DIAGONAL)");
+				}
 			}
 			else if ((xobjetivo > xtopemax) && (yobjetivo <= ytopemax))
 			{ // ojetivo x fuera de limites y objetivo y dentro de limites entonces avance recortando x
-				if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, xtopemax, y + y_avanza_recortando_x, papel, grosor_linea_dibujo);
-				y = y + y_avanza_recortando_x;
-				x = xtopemax;
-				ultima_tecla_pulsada = teclas.GUION;
-				console.log("Y Avanza RECORTANDO X");
+				if (x != xtopemax)
+				{
+					if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
+					dibujarLinea(color_linea_dibujo, x, y, xtopemax, y + y_avanza_recortando_x, papel, grosor_linea_dibujo);
+					y = y + y_avanza_recortando_x;
+					x = xtopemax;
+					ultima_tecla_pulsada = teclas.GUION;
+					console.log("Anvance DIAGONAL hasta el LÍMITE en X");
+				}
+				else
+				{ // if we are already in the limit, nothing to do, don't move
+					console.log("Se ha ALCANZADO LIMITE DERECHO en X (DIAGONAL)");
+				}
 			}
 			else
 			{
-				console.log("	* - Límite INFERIOR-DERECHO superado");
+				console.log("	* - Caso INFERIOR-DERECHO no controlado");
 			}
 			console.log("xobjetivo: " + xobjetivo + " * yobjetivo: " + yobjetivo);
 		break;
@@ -470,25 +512,39 @@ function dibujarConTeclas(evento)
 				x = xobjetivo;
 				y = yobjetivo;
 				ultima_tecla_pulsada = teclas.P;
-				console.log("Avance NORMAL");
+				console.log("Avance DIAGONAL NORMAL");
 			}
 			else if ((xobjetivo <= xtopemax) && (yobjetivo < ytopemin))
 			{ // ojetivo x dentro de limites y objetivo y fuera de limites entonces avance recortando y
-				if (ultima_tecla_pulsada != teclas.P && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, x + x_avanza_recortando_y, ytopemin, papel, grosor_linea_dibujo);
-				x = x + x_avanza_recortando_y;
-				y =  ytopemin;
-				ultima_tecla_pulsada = teclas.P;
-				console.log("X Avanza RECORTANDO Y");
+				if (y != ytopemin)
+				{
+					if (ultima_tecla_pulsada != teclas.P && quiere_punto_giro) dibujarPuntoGiro();
+					dibujarLinea(color_linea_dibujo, x, y, x + x_avanza_recortando_y, ytopemin, papel, grosor_linea_dibujo);
+					x = x + x_avanza_recortando_y;
+					y =  ytopemin;
+					ultima_tecla_pulsada = teclas.P;
+					console.log("Anvance DIAGONAL hasta el LÍMITE en Y");
+				}
+				else
+				{ // if we are already in the limit, nothing to do, don't move
+					console.log("Se ha ALCANZADO LIMITE INFERIOR en Y (DIAGONAL)");
+				}
 			}
 			else if ((xobjetivo > xtopemax) && (yobjetivo >= ytopemin))
 			{ // ojetivo x fuera de limites y objetivo y dentro de limites entonces avance recortando x
-				if (ultima_tecla_pulsada != teclas.P && quiere_punto_giro) dibujarPuntoGiro();
-				dibujarLinea(color_linea_dibujo, x, y, xtopemax, y - y_avanza_recortando_x, papel, grosor_linea_dibujo);
-				y = y - y_avanza_recortando_x;
-				x = xtopemax;
-				ultima_tecla_pulsada = teclas.P;
-				console.log("Y Avanza RECORTANDO X");
+				if (x != xtopemax)
+				{
+					if (ultima_tecla_pulsada != teclas.P && quiere_punto_giro) dibujarPuntoGiro();
+					dibujarLinea(color_linea_dibujo, x, y, xtopemax, y - y_avanza_recortando_x, papel, grosor_linea_dibujo);
+					y = y - y_avanza_recortando_x;
+					x = xtopemax;
+					ultima_tecla_pulsada = teclas.P;
+					console.log("Anvance DIAGONAL hasta el LÍMITE en X");
+				}
+				else
+				{ // if we are already in the limit, nothing to do, don't move
+					console.log("Se ha ALCANZADO LIMITE DERECHO en X (DIAGONAL)");
+				}
 			}
 			else
 			{
