@@ -81,7 +81,7 @@ var ylimite = 500;
 // line for canvas limits
 var color_linea_borde = colores.GRIS_OSCURO; // this is the perimeter line
 var grosor_linea_borde = 5;
-var quiere_dibujar_bordes = false;
+var quiere_dibujar_bordes = true;
 
 // configure grid
 var rejilla = 10; // the number of pixel for grid space
@@ -93,7 +93,16 @@ var color_linea_aspa = color_linea_rejilla; // central blade's line color
 var grosor_linea_aspa = grosor_linea_rejilla;
 var quiere_dibujar_aspa = true;
 
-var quiere_dibujar_test = true;
+var quiere_dibujar_test = false;
+
+// configure Comecocos
+var color_linea_comecocos = colores.NEGRO; // ComeCocos line color
+var color_linea_comecocos_pantalla = colores.GRIS_OSCURO; // ComeCocos's maze's line color
+var estilo_relleno_comecocos = colores.AZUL;
+var estilo_relleno_comida_pantalla = colores.CIAN;
+var grosor_linea_comecocos = 5;
+var grosor_linea_comecocos_pantalla = 2;
+var quiere_dibujar_comecocos = true;
 
 // stroke speed, number of pixels that moves to draw each time the key is pressed
 var offset = 15; 
@@ -138,6 +147,7 @@ function cargarFondo()
 	if (quiere_dibujar_rejilla) dibujarRejilla();
 	if (quiere_dibujar_aspa) dibujarAspa();
 	if (quiere_dibujar_test) dibujarTest();				// draw some test function
+	if (quiere_dibujar_comecocos) dibujarComeCocos();	// draw figures like comecocos
 	if (quiere_dibujar_bordes) dibujarBordesPapel();	// want to paint border line at last
 	if (quiere_punto_inicial) dibujarPuntoInicial();	// but initial point over
 }
@@ -295,6 +305,117 @@ function dibujarTest()
 	papel.strokeStyle = guardar_strokeStype;
 	papel.strokeStyle = guardar_lineWidth;
 	papel.fillStyle = guardar_fillStyle;
+}
+
+function dibujarComeCocos()
+{
+	// save values
+	var guardar_strokeStype = papel.strokeStyle;
+	var guardar_lineWidth = papel.strokeStyle;
+	var guardar_fillStyle = papel.fillStyle;
+
+	// CONFIGURACIÓN PANTALLA
+	papel.strokeStyle = color_linea_comecocos_pantalla;
+	papel.lineWidth = grosor_linea_comecocos_pantalla;
+	papel.fillStyle = estilo_relleno_comecocos;
+
+	// bordes
+	dibujarRectEsqRed(papel, (xtopemin + offset), (ytopemin + offset), (xtopemax - offset * 2), (ytopemax - offset * 2),15);
+	dibujarRectEsqRed(papel, (xtopemin + offset + 7), (ytopemin + offset + 7), (xtopemax - offset * 2 - 14), (ytopemax - offset * 2 - 14),9);
+	// obstaculos
+    dibujarRectEsqRed(papel,48,48,48,32,10);
+    dibujarRectEsqRed(papel,48,128,48,16,6);
+    dibujarRectEsqRed(papel,128,48,48,32,10);
+    dibujarRectEsqRed(papel,128,112,32,48,10);
+
+	// CONFIGURACIÓN PUNTOS PUNTOS
+    papel.fillStyle = estilo_relleno_comida_pantalla;
+
+    // linea horizontal desde 2 a 26 en primera fila (35)
+    for(var i=0;i<26;i++){
+      papel.fillRect(51+i*16,35,4,4);
+    }
+
+    // linea vertical desde 3 a 26 en sexta columna (115)
+    for(i=0;i<26;i++){
+      papel.fillRect(115,67+i*16,4,4);
+    }
+
+    // lina horizontal desde 1 a 26 en cuarta fila (99)
+    for(i=0;i<27;i++){
+      papel.fillRect(35+i*16,99,4,4);
+    }
+
+    // CONFIGURACIÓN ITEMS
+	papel.fillStyle = estilo_relleno_comecocos;
+	papel.lineWidth = grosor_linea_comecocos;
+
+    // COCO
+    papel.beginPath();
+    papel.arc(37,37,13,Math.PI/7,-Math.PI/7,false);
+    papel.lineTo(31,37);
+    papel.fill();
+
+    // COCO
+    papel.beginPath();
+    papel.moveTo(83,116);
+    papel.lineTo(83,102);
+    papel.bezierCurveTo(83,94,89,88,97,88);
+    papel.bezierCurveTo(105,88,111,94,111,102);
+    papel.lineTo(111,116);
+    papel.lineTo(106.333,111.333);
+    papel.lineTo(101.666,116);
+    papel.lineTo(97,111.333);
+    papel.lineTo(92.333,116);
+    papel.lineTo(87.666,111.333);
+    papel.lineTo(83,116);
+    papel.fill();
+
+    // OJOS COCO
+    papel.fillStyle = colores.BLANCO;
+    papel.beginPath();
+    papel.moveTo(91,96);
+    papel.bezierCurveTo(88,96,87,99,87,101);
+    papel.bezierCurveTo(87,103,88,106,91,106);
+    papel.bezierCurveTo(94,106,95,103,95,101);
+    papel.bezierCurveTo(95,99,94,96,91,96);
+    papel.moveTo(103,96);
+    papel.bezierCurveTo(100,96,99,99,99,101);
+    papel.bezierCurveTo(99,103,100,106,103,106);
+    papel.bezierCurveTo(106,106,107,103,107,101);
+    papel.bezierCurveTo(107,99,106,96,103,96);
+    papel.fill();
+
+    // PUPILAS COCO
+    papel.fillStyle = colores.NEGRO;
+    papel.beginPath();
+    papel.arc(101,102,2,0,Math.PI*2,true);
+    papel.fill();
+
+    papel.beginPath();
+    papel.arc(89,102,2,0,Math.PI*2,true);
+    papel.fill();
+
+	console.log("* - He terminado de dibujarComeCocos();");
+
+	// recuperamos los valores guardados
+	papel.strokeStyle = guardar_strokeStype;
+	papel.strokeStyle = guardar_lineWidth;
+	papel.fillStyle = guardar_fillStyle;
+}
+
+function dibujarRectEsqRed(papel,x,y,width,height,radius){
+  papel.beginPath();
+  papel.moveTo(x,y+radius);
+  papel.lineTo(x,y+height-radius);
+  papel.quadraticCurveTo(x,y+height,x+radius,y+height);
+  papel.lineTo(x+width-radius,y+height);
+  papel.quadraticCurveTo(x+width,y+height,x+width,y+height-radius);
+  papel.lineTo(x+width,y+radius);
+  papel.quadraticCurveTo(x+width,y,x+width-radius,y);
+  papel.lineTo(x+radius,y);
+  papel.quadraticCurveTo(x,y,x,y+radius);
+  papel.stroke();
 }
 
 function dibujarConTeclas(evento)
