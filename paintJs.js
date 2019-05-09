@@ -81,7 +81,7 @@ var ylimite = 500;
 // line for canvas limits
 var color_linea_borde = colores.GRIS_OSCURO; // this is the perimeter line
 var grosor_linea_borde = 5;
-var quiere_dibujar_bordes = true;
+var quiere_dibujar_bordes = false;
 
 // configure grid
 var rejilla = 10; // the number of pixel for grid space
@@ -92,6 +92,8 @@ var quiere_dibujar_rejilla = true; // if wants show the grid
 var color_linea_aspa = color_linea_rejilla; // central blade's line color
 var grosor_linea_aspa = grosor_linea_rejilla;
 var quiere_dibujar_aspa = true;
+
+var quiere_dibujar_test = true;
 
 // stroke speed, number of pixels that moves to draw each time the key is pressed
 var offset = 15; 
@@ -135,8 +137,9 @@ function cargarFondo()
 	if (quiere_imagen_fondo) papel.drawImage(imagenFondo, 0, 0);
 	if (quiere_dibujar_rejilla) dibujarRejilla();
 	if (quiere_dibujar_aspa) dibujarAspa();
-	if (quiere_dibujar_bordes) dibujarBordesPapel(); // want to paint border line at last
-	if (quiere_punto_inicial) dibujarPuntoInicial(); // but initial point over
+	if (quiere_dibujar_test) dibujarTest();				// draw some test function
+	if (quiere_dibujar_bordes) dibujarBordesPapel();	// want to paint border line at last
+	if (quiere_punto_inicial) dibujarPuntoInicial();	// but initial point over
 }
 
 function dibujarLinea(color, xinicial, yinicial, xfinal, yfinal, lienzo, ancho)
@@ -206,6 +209,94 @@ function dibujarRejilla()
 	}
 }
 
+function dibujarTest()
+{
+	// save values
+	var guardar_strokeStype = papel.strokeStyle;
+	var guardar_lineWidth = papel.strokeStyle;
+	var guardar_fillStyle = papel.fillStyle;
+
+	// set values
+	papel.strokeStyle = colores.NEGRO;
+	papel.lineWidth = 2;
+	papel.fillStyle = colores.AZUL;
+
+
+	// Triángulo rellenado
+	papel.beginPath();
+	papel.moveTo(25+(xlimite/300),25+(xlimite/2));
+	papel.lineTo(105+(xlimite/2),25+(xlimite/2));
+	papel.lineTo(25+(xlimite/2),105+(xlimite/2));
+	papel.fill();
+
+	// Triángulo contorneado
+	papel.beginPath();
+	papel.strokeStyle = color_linea_borde;
+	papel.lineWidth = grosor_linea_borde;
+	papel.moveTo(465,465);
+	papel.lineTo(465,365);
+	papel.lineTo(365,465);
+	papel.closePath();
+	papel.stroke()
+
+	// circulitos
+	for(var i=0;i<4;i++){
+		for(var j=0;j<3;j++){
+			papel.beginPath();
+			var x				= 250+j*50;					// Coordenada x
+			var y				= 250+i*50;					// Coordenada y
+			var radius			= 20;						// Radio del arco
+			var startAngle		= 0;						// Punto inicial del círculo
+			var endAngle		= Math.PI+(Math.PI*j)/2		// Punto final del círculo
+			var anticlockwise	= i%2==0 ? false : true;	// Sentido de las manecillas del reloj y contrario a ellas
+
+			papel.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+
+			if (i>1)
+			{
+				papel.fill();
+			}
+			else
+			{
+				papel.stroke();
+			}
+		}
+	}
+
+	// borde rojo gordo
+	papel.beginPath();
+	papel.strokeStyle = colores.ROJO;
+	papel.lineWidth = 8;
+	papel.moveTo(0, 0);
+	papel.lineTo(xlimite, 0);
+	papel.lineTo(xlimite, ylimite);
+	papel.lineTo(0, ylimite);
+	papel.lineTo(0, 0);
+	papel.fillStyle = colores.GRIS_CLARO;
+	// papel.fill(); // rellena el contorno del color definido en .fillStyle
+	papel.stroke();
+	papel.closePath();
+
+	// CORAZÓN (Quadratric curves)
+	papel.beginPath();
+	papel.moveTo(75,40);
+	papel.bezierCurveTo(75,37,70,25,50,25);
+	papel.bezierCurveTo(20,25,20,62.5,20,62.5);
+	papel.bezierCurveTo(20,80,40,102,75,120);
+	papel.bezierCurveTo(110,102,130,80,130,62.5);
+	papel.bezierCurveTo(130,62.5,130,25,100,25);
+	papel.bezierCurveTo(85,25,75,37,75,40);
+	papel.fillStyle = colores.ROSA;
+	papel.fill();
+
+	console.log("* - He terminado de dibujarTest();");
+
+	// recuperamos los valores guardados
+	papel.strokeStyle = guardar_strokeStype;
+	papel.strokeStyle = guardar_lineWidth;
+	papel.fillStyle = guardar_fillStyle;
+}
+
 function dibujarConTeclas(evento)
 {
 	var xobjetivo, yobjetivo;
@@ -268,7 +359,7 @@ function dibujarConTeclas(evento)
 					if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
 					dibujarLinea(color_linea_dibujo, x, y, x - x_avanza_recortando_y, ytopemin, papel, grosor_linea_dibujo);
 					x = x - x_avanza_recortando_y;
-					y =  ytopemin;
+					y = ytopemin;
 					ultima_tecla_pulsada = teclas.I;
 					console.log("Anvance DIAGONAL hasta el LÍMITE en Y");
 				}
@@ -358,7 +449,7 @@ function dibujarConTeclas(evento)
 					if (ultima_tecla_pulsada != teclas.COMA && quiere_punto_giro) dibujarPuntoGiro();
 					dibujarLinea(color_linea_dibujo, x, y, x - x_avanza_recortando_y, ytopemax, papel, grosor_linea_dibujo);
 					x = x - x_avanza_recortando_y;
-					y =  ytopemax;
+					y = ytopemax;
 					ultima_tecla_pulsada = teclas.COMA;
 					console.log("Anvance DIAGONAL hasta el LÍMITE en Y");
 				}
@@ -448,7 +539,7 @@ function dibujarConTeclas(evento)
 					if (ultima_tecla_pulsada != teclas.I && quiere_punto_giro) dibujarPuntoGiro();
 					dibujarLinea(color_linea_dibujo, x, y, x + x_avanza_recortando_y, ytopemax, papel, grosor_linea_dibujo);
 					x = x + x_avanza_recortando_y;
-					y =  ytopemax;
+					y = ytopemax;
 					ultima_tecla_pulsada = teclas.GUION;
 					console.log("Anvance DIAGONAL hasta el LÍMITE en Y");
 				}
@@ -538,7 +629,7 @@ function dibujarConTeclas(evento)
 					if (ultima_tecla_pulsada != teclas.P && quiere_punto_giro) dibujarPuntoGiro();
 					dibujarLinea(color_linea_dibujo, x, y, x + x_avanza_recortando_y, ytopemin, papel, grosor_linea_dibujo);
 					x = x + x_avanza_recortando_y;
-					y =  ytopemin;
+					y = ytopemin;
 					ultima_tecla_pulsada = teclas.P;
 					console.log("Anvance DIAGONAL hasta el LÍMITE en Y");
 				}
