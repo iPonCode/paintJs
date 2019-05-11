@@ -3,7 +3,6 @@
 // we will load background image always the first before other items
 // we will know when background is loaded with cargaOk
 // image fondo only will show if quiere_imagen_fondo its true
-var quiere_imagen_fondo = true;
 var fondo = {
 	url: "fondo.png",
 	cargaOk: false
@@ -85,22 +84,28 @@ var papel = area_dibujo.getContext("2d");
 var xlimite = 500;
 var ylimite = 500;
 
+// configure wants
+var quiere_imagen_fondo = true;
+var quiere_dibujar_bordes = true;
+var quiere_dibujar_rejilla = false; // if wants show the grid
+var quiere_dibujar_aspa = false;
+var quiere_dibujar_test = false;
+var quiere_dibujar_comecocos = true;
+var quiere_punto_inicial = true; // paint initial point
+var quiere_punto_giro = true; // if you dont like square this will draw beatifull corners
+
 // line for canvas limits
 var color_linea_borde = colores.GRIS_OSCURO; // this is the perimeter line
 var grosor_linea_borde = 5;
-var quiere_dibujar_bordes = false;
 
 // configure grid
 var rejilla = 10; // the number of pixel for grid space
 var color_linea_rejilla = colores.GRIS_CLARO; // grid's line color
 var grosor_linea_rejilla = 1; // 1 for better results (many lines in grid)
-var quiere_dibujar_rejilla = false; // if wants show the grid
 
 var color_linea_aspa = color_linea_rejilla; // central blade's line color
 var grosor_linea_aspa = grosor_linea_rejilla;
-var quiere_dibujar_aspa = false;
 
-var quiere_dibujar_test = false;
 
 // configure Comecocos
 var estilo_relleno_comecocos = colores.PURPURA; // ComeCocos fill color
@@ -109,7 +114,6 @@ var color_linea_comecocos_pantalla = colores.GRIS_OSCURO; // ComeCocos's maze's 
 var estilo_relleno_comida = colores.BLANCO; // food's blocks fill color
 var grosor_punto_comida = 3; // square size for food's blocks 
 var grosor_linea_comecocos_pantalla = 2;
-var quiere_dibujar_comecocos = true;
 
 // stroke speed, number of pixels that moves to draw each time the key is pressed
 var offset = 15; 
@@ -117,12 +121,10 @@ var offset = 15;
 // initial point
 var color_punto_inicial = colores.ROJO;
 var grosor_punto_inicial = 5;
-var quiere_punto_inicial = true; // paint initial point
 
 // configure line for draw
 var color_linea_dibujo = colores.AZUL;
 var grosor_linea_dibujo = 2;
-var quiere_punto_giro = true; // if you dont like square this will draw beatifull corners
 var color_punto_giro = color_linea_dibujo; // play with this color for cool results
 var grosor_punto_giro = grosor_linea_dibujo; // simmilar to grosor_linea_dibujo to best results
 
