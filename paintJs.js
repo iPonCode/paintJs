@@ -65,20 +65,49 @@ var colores = { GRIS_CLARO: "#c2c2c2",
 var textos = { COORDENADAS: "Coordenadas ",
 				COORDS_INI: "iniciales: ",
 				COORDS_ACT: "actuales: ",
+  ERROR_WEBGL_NO_SOPORTADO: "Lo siento, renderizado WebGL no soportado por este navegador",
+ ERROR_CANVAS_NO_SOPORTADO: "Lo siento :( este navegador parece no soportar el elemento HTML5 <code>&lt;canvas&gt;</code>",
+ 		  ERROR_2D_CONTEXT: "Lo siento, aunque WebGL sí es soportado, no es posible crear el contexto 2d",
+ NO_ERROR_CANVAS_SOPORTADO: "Este navegador sí soporta el elemento HTML5 <code>&lt;canvas&gt;</code>"
 			};
 // for getElementById, this store all html id's items
-var elements_by_id = { COORDS: "soy_un_parrafo",
-				        OTROS: "otro_id_de_elemento",
-				  AREA_DIBUJO: "area_de_dibujo"
+var elements_by_id = {	COORDS: "coordenadas_en_tiempo_real",
+		  INDICACIONES_USUARIO: "indicaciones_usuario",
+				   AREA_DIBUJO: "area_de_dibujo",
+			 MENSAJES_DE_ERROR: "mensajes_de_error"
 					 };
 // configure the key pressed behavior to catch
 // try keyup for draw carefuly, try keydown to quickly
 var evento_tecla = "keydown";
 var ultima_tecla_pulsada = teclas.SPACE; // inizilice with some key, like spacebar
 
-// get canvas from html
-var area_dibujo = document.getElementById(elements_by_id.AREA_DIBUJO);
-var papel = area_dibujo.getContext("2d");
+// variables for getElementById for items in html to show user messages
+var mensajes_de_error = document.getElementById(elements_by_id.MENSAJES_DE_ERROR);
+var mensaje_coordenadas = document.getElementById(elements_by_id.COORDS);
+
+// check if cavas are supported by browser and get context 2d
+var area_dibujo, papel;
+if (!window.WebGLRenderingContext)
+{
+    window.location = "http://get.webgl.org";
+	console.log("**** WebGL Rendering Context not supported");
+	// we show in html body the error message using innerHTML elemnt property
+	mensajes_de_error.innerHTML = textos.ERROR_WEBGL_NO_SOPORTADO;
+}
+else
+{
+    area_dibujo = document.getElementById(elements_by_id.AREA_DIBUJO);
+    papel = area_dibujo.getContext("2d");
+	console.log("**** WebGL Rendering Context supported");
+	// we show in html body the no error message using innerHTML elemnt property
+	mensajes_de_error.innerHTML = textos.NO_ERROR_CANVAS_SOPORTADO;
+
+    if (!papel) {
+		console.log("**** Browser supports WebGL, but cannot create the 2d context");
+		// we show in html body the error message using innerHTML elemnt property
+		mensajes_de_error.innerHTML = textos.ERROR_2D_CONTEXT;
+    }
+}
 
 // canvas limits (its recommended that it be the same size as in the html)
 var xlimite = 500;
@@ -132,7 +161,7 @@ var grosor_punto_giro = grosor_linea_dibujo; // simmilar to grosor_linea_dibujo 
 var color_punto_gordo = color_punto_inicial; // when user tap spacebar draw a punto_gordo X
 var grosor_punto_gordo = 10; // more than 5 it starts to look like a cross X, less like a a point
 
-var factor_aprox = 0; // experimental, set to 0 for a normal behaviour
+var factor_aprox = 27; // experimental, set to 0 for a normal behaviour
 var xtopemax = xlimite - factor_aprox; // is the high limit (by the right and down) of the x and y coordinates
 var ytopemax = ylimite - factor_aprox; // taking into account the experimental factor_aprox
 var xtopemin = 0 + factor_aprox; // is the low limit (by the left and up) of the x and y coordinates
@@ -146,7 +175,6 @@ y = ajustarARejilla(aleatorio(ytopemin, ytopemax), rejilla, ytopemax);
 document.addEventListener(evento_tecla, dibujarConTeclas);
 
 // we show in html body the initial coordinate using innerHTML elemnt property
-var mensaje_coordenadas = document.getElementById(elements_by_id.COORDS);
 mensaje_coordenadas.innerHTML = textos.COORDENADAS + textos.COORDS_INI + "[ x: " + x + ", y: " + y + " ]";
 
 function cargarFondo()
@@ -328,8 +356,8 @@ function dibujarComeCocos()
 	papel.lineWidth = grosor_linea_comecocos_pantalla;
 
 	// borders
-	dibujarRectEsqRed(papel, (xtopemin + offset), (ytopemin + offset), (xtopemax - offset * 2), (ytopemax - offset * 2),15);
-	dibujarRectEsqRed(papel, (xtopemin + offset + 7), (ytopemin + offset + 7), (xtopemax - offset * 2 - 14), (ytopemax - offset * 2 - 14),9);
+	dibujarRectEsqRed(papel, (0 + offset), (0 + offset), (xlimite - offset * 2), (ylimite - offset * 2),15);
+	dibujarRectEsqRed(papel, (0 + offset + 7), (0 + offset + 7), (xlimite - offset * 2 - 14), (ylimite - offset * 2 - 14),9);
 	// obstacles
     dibujarRectEsqRed(papel,48,48,48,32,10);
     dibujarRectEsqRed(papel,48,128,48,16,6);
