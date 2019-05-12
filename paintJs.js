@@ -500,7 +500,7 @@ function dibujarConTeclas(evento)
 			xobjetivo = x - offset; // estas serían las coordenadas x e y finales
 			yobjetivo = y - offset; // después de aplicar el desplazamiento
 			x_avanza_recortando_y = y - ytopemin; // lo que debe avanzar en coorderada x o y cuando
-			y_avanza_recortando_x = xtopemin + x; // xobjetivo o yobjetivo están fuera de limites
+			y_avanza_recortando_x = x - xtopemin; // xobjetivo o yobjetivo están fuera de limites
 
 			if ((xobjetivo >= xtopemin) && (yobjetivo >= ytopemin)) 
 			{ // ojetivo dentro de limites o justo en el limite entonces avance normal
